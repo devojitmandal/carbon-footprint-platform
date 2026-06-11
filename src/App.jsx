@@ -42,7 +42,7 @@ function App() {
           
           <CarbonForm onCalculate={(data, rawInputs) => {
             setResults(data);
-            setRecommendations(getRecommendations(rawInputs || data.inputs));
+            setRecommendations(getRecommendations(sanitizedInputs));
           }} />
         </div>
 

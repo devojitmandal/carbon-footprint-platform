@@ -17,7 +17,8 @@ const ShareCard = forwardRef(({ results }, ref) => {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-0 h-0 overflow-hidden pointer-events-none">
+    
+    <div style={{ position: 'fixed', top: '-9999px', left: '-9999px', pointerEvents: 'none' }}>
       <div 
         ref={ref} 
         className="w-[600px] h-[315px] border-2 rounded-2xl p-8 flex flex-col justify-between font-sans overflow-hidden"
@@ -82,5 +83,6 @@ const ShareCard = forwardRef(({ results }, ref) => {
     </div>
   );
 });
+ShareCard.displayName = 'ShareCard';
 
 export default ShareCard;

@@ -7,7 +7,7 @@ export function getRecommendations(sanitizedInputs) {
     has_petrol_or_diesel_car: transport.vehicleType === 'petrol_car' || transport.vehicleType === 'diesel_car',
     drives_more_than_50km_week: (transport.carKm || 0) > 50,
     drives_more_than_100km_week: (transport.carKm || 0) > 100,
-    low_domestic_flights: (transport.domesticFlights || 0) > 0 && (transport.domesticFlights || 0) <= 2,
+    low_domestic_flights: (transport.domesticFlights || 0) >= 1 && (transport.domesticFlights || 0) <= 2,
     high_domestic_flights: (transport.domesticFlights || 0) > 2,
     uses_electricity: (energy.monthlyKwh || 0) > 0,
     monthly_kwh_above_200: (energy.monthlyKwh || 0) > 200,

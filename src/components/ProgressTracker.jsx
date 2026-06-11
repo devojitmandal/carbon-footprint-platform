@@ -1,6 +1,7 @@
 import React from 'react';
 import { calculateProjectedFootprint } from '../utils/storage';
 import { getRating } from '../calculator/calculator';
+import { downloadCalendarInvite } from '../utils/calendar';
 
 export default function ProgressTracker({ results, commitments, onRemove }) {
   const projectedTotal = calculateProjectedFootprint(results.total, commitments);
@@ -82,11 +83,25 @@ export default function ProgressTracker({ results, commitments, onRemove }) {
                 <span className="text-green-500">✓</span>
                 <span className="text-sm text-white font-medium">{c.title}</span>
               </div>
-              <div className="flex items-center gap-4">
-                <span className="text-xs text-green-400 font-bold">-{Math.round(c.savingsKg)} kg/yr</span>
+              
+              {/* FIXED: The new buttons container with the Calendar Sync feature */}
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-green-400 font-bold hidden sm:inline">
+                  -{Math.round(c.savingsKg)} kg/yr
+                </span>
+                
+                {/* NEW: Calendar Sync Button */}
+                <button 
+                  onClick={() => downloadCalendarInvite(c.title, c.description)}
+                  className="bg-blue-900/30 text-blue-400 hover:bg-blue-800/50 hover:text-blue-300 text-[10px] font-bold px-2 py-1.5 rounded flex items-center gap-1 transition-colors border border-blue-800/50"
+                  title="Add weekly reminder to your Calendar"
+                >
+                  <span>📅</span> Sync
+                </button>
+
                 <button 
                   onClick={() => onRemove(c.id)}
-                  className="text-gray-500 hover:text-red-400 transition-colors px-2 py-1"
+                  className="text-gray-500 hover:text-red-400 transition-colors px-2 py-1 bg-gray-900/50 rounded"
                   aria-label="Remove commitment"
                 >
                   ✕
