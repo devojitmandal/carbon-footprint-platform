@@ -10,8 +10,6 @@ import { loadCommitments, addCommitment, removeCommitment } from './utils/storag
 function App() {
   const [results, setResults] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
-  
-  // Hydrate from localStorage on mount
   const [commitments, setCommitments] = useState(() => loadCommitments());
 
   const handleCommit = (recommendation) => {
@@ -28,46 +26,28 @@ function App() {
     setResults(null);
     setRecommendations([]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Note: We deliberately do NOT clear commitments here
+  };
+
+  // sanitizedInputs comes from sanitizeFormInputs() inside CarbonForm
+  // It is already in the correct nested shape:
+  // { transport: {...}, energy: {...}, diet: {...}, shopping: {...} }
+  // Pass it directly to getRecommendations — no regrouping needed
+  const handleCalculate = (data, sanitizedInputs) => {
+    setResults(data);
+    setRecommendations(getRecommendations(sanitizedInputs));
   };
 
   return (
     <Layout>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* Left Column: Form */}
         <div className="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h2 className="text-2xl font-bold mb-2 text-gray-800">Calculate Your Impact</h2>
-          <p className="text-gray-500 mb-6">Fill out the parameters below to generate your personalized carbon footprint analysis.</p>
-          
-          <CarbonForm onCalculate={(data, sanitizedInputs) => {
-            setResults(data);
-            
-            // FIX: Re-group the flat form data into the categories the engine expects!
-            const groupedInputs = {
-              transport: { 
-                vehicleType: sanitizedInputs.vehicleType, 
-                carKm: sanitizedInputs.carKm,
-                bikeKm: sanitizedInputs.bikeKm,
-                busKm: sanitizedInputs.busKm,
-                trainKm: sanitizedInputs.trainKm,
-                domesticFlights: sanitizedInputs.domesticFlights,
-                longFlights: sanitizedInputs.longFlights
-              },
-              energy: { 
-                monthlyKwh: sanitizedInputs.monthlyKwh,
-                lpgCylinders: sanitizedInputs.lpgCylinders
-              },
-              diet: { 
-                dietType: sanitizedInputs.dietType 
-              },
-              shopping: { 
-                shoppingLevel: sanitizedInputs.shoppingLevel 
-              }
-            };
-
-            setRecommendations(getRecommendations(groupedInputs));
-          }} />
+          <p className="text-gray-500 mb-6">
+            Fill out the parameters below to generate your personalized carbon footprint analysis.
+          </p>
+          <CarbonForm onCalculate={handleCalculate} />
         </div>
 
         {/* Right Column: Results & Actions */}
@@ -76,7 +56,7 @@ function App() {
             <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
               <h2 className="text-xl font-bold">Analysis Dashboard</h2>
               {results && (
-                <button 
+                <button
                   onClick={handleRecalculate}
                   className="text-xs font-semibold text-green-400 hover:text-green-300 transition-colors"
                 >
@@ -84,22 +64,24 @@ function App() {
                 </button>
               )}
             </div>
-            
+
             {!results ? (
               <div className="text-center py-12">
                 <div className="text-4xl mb-4 opacity-50">📊</div>
-                <p className="text-gray-400 text-sm">Awaiting your data.<br/>Fill out the form and click calculate!</p>
+                <p className="text-gray-400 text-sm">
+                  Awaiting your data.<br />Fill out the form and click calculate!
+                </p>
               </div>
             ) : (
               <>
                 <ResultsDashboard results={results} />
-                <ActionRecommender 
-                  recommendations={recommendations} 
+                <ActionRecommender
+                  recommendations={recommendations}
                   totalFootprint={results.total}
                   commitments={commitments}
                   onCommit={handleCommit}
                 />
-                <ProgressTracker 
+                <ProgressTracker
                   results={results}
                   commitments={commitments}
                   onRemove={handleRemove}
