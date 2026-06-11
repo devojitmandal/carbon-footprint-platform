@@ -42,7 +42,31 @@ function App() {
           
           <CarbonForm onCalculate={(data, sanitizedInputs) => {
             setResults(data);
-            setRecommendations(getRecommendations(sanitizedInputs));
+            
+            // FIX: Re-group the flat form data into the categories the engine expects!
+            const groupedInputs = {
+              transport: { 
+                vehicleType: sanitizedInputs.vehicleType, 
+                carKm: sanitizedInputs.carKm,
+                bikeKm: sanitizedInputs.bikeKm,
+                busKm: sanitizedInputs.busKm,
+                trainKm: sanitizedInputs.trainKm,
+                domesticFlights: sanitizedInputs.domesticFlights,
+                longFlights: sanitizedInputs.longFlights
+              },
+              energy: { 
+                monthlyKwh: sanitizedInputs.monthlyKwh,
+                lpgCylinders: sanitizedInputs.lpgCylinders
+              },
+              diet: { 
+                dietType: sanitizedInputs.dietType 
+              },
+              shopping: { 
+                shoppingLevel: sanitizedInputs.shoppingLevel 
+              }
+            };
+
+            setRecommendations(getRecommendations(groupedInputs));
           }} />
         </div>
 
