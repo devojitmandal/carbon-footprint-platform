@@ -1,4 +1,3 @@
-// src/calculator/calculator.js
 import { 
     TRANSPORT_FACTORS, 
     DIET_FACTORS, 
@@ -8,7 +7,6 @@ import {
   } from '../data/emissions';
   
   export function calculateTransport(inputs) {
-    // Handle 'none' or missing vehicle types
     const carFactor = inputs.vehicleType === 'none' ? 0 : (TRANSPORT_FACTORS[inputs.vehicleType] || 0);
     
     const weeklyCarKm = (inputs.carKm || 0) * 52;
@@ -37,14 +35,14 @@ import {
   
   export function calculateDiet(inputs) {
     if (!inputs || !inputs.dietType || !DIET_FACTORS[inputs.dietType]) {
-      return null; // Invalid or missing diet type
+      return null;
     }
     return DIET_FACTORS[inputs.dietType];
   }
   
   export function calculateShopping(inputs) {
     if (!inputs || !inputs.shoppingLevel || !SHOPPING_FACTORS[inputs.shoppingLevel]) {
-      return SHOPPING_FACTORS.average; // Fallback
+      return SHOPPING_FACTORS.average; 
     }
     return SHOPPING_FACTORS[inputs.shoppingLevel];
   }
@@ -70,6 +68,8 @@ import {
       breakdown: { transport, energy, diet, shopping },
       vsGlobalAvg: ((total - BENCHMARKS.GLOBAL_AVG) / BENCHMARKS.GLOBAL_AVG) * 100,
       vsIndiaAvg: ((total - BENCHMARKS.INDIA_AVG) / BENCHMARKS.INDIA_AVG) * 100,
+      vs2030Target: ((total - BENCHMARKS.TARGET_2030) / BENCHMARKS.TARGET_2030) * 100, // NEW
+      vs2050Target: ((total - BENCHMARKS.TARGET_2050) / BENCHMARKS.TARGET_2050) * 100, // NEW
       rating: getRating(total)
     };
   }

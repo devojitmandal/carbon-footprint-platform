@@ -1,19 +1,34 @@
-// src/App.jsx
 import React, { useState } from 'react';
 import Layout from './components/Layout';
 import CarbonForm from './components/CarbonForm';
 import ResultsDashboard from './components/ResultsDashboard';
 import ActionRecommender from './components/ActionRecommender';
-import { getRecommendations } from './calculator/recommendations'; // NEW IMPORT
+import ProgressTracker from './components/ProgressTracker';
+import { getRecommendations } from './calculator/recommendations';
+import { loadCommitments, addCommitment, removeCommitment } from './utils/storage';
 
 function App() {
   const [results, setResults] = useState(null);
-  const [recommendations, setRecommendations] = useState([]); // NEW STATE
+  const [recommendations, setRecommendations] = useState([]);
+  
+  // Hydrate from localStorage on mount
+  const [commitments, setCommitments] = useState(() => loadCommitments());
+
+  const handleCommit = (recommendation) => {
+    const updated = addCommitment(recommendation);
+    setCommitments(updated);
+  };
+
+  const handleRemove = (id) => {
+    const updated = removeCommitment(id);
+    setCommitments(updated);
+  };
 
   const handleRecalculate = () => {
     setResults(null);
     setRecommendations([]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Note: We deliberately do NOT clear commitments here
   };
 
   return (
@@ -27,8 +42,7 @@ function App() {
           
           <CarbonForm onCalculate={(data, rawInputs) => {
             setResults(data);
-            // Engine triggered here using the raw inputs mapped to the recommendations engine
-            setRecommendations(getRecommendations(rawInputs || data.inputs)); // Assumes sanitized data is accessible
+            setRecommendations(getRecommendations(rawInputs || data.inputs));
           }} />
         </div>
 
@@ -55,7 +69,17 @@ function App() {
             ) : (
               <>
                 <ResultsDashboard results={results} />
-                <ActionRecommender recommendations={recommendations} totalFootprint={results.total} />
+                <ActionRecommender 
+                  recommendations={recommendations} 
+                  totalFootprint={results.total}
+                  commitments={commitments}
+                  onCommit={handleCommit}
+                />
+                <ProgressTracker 
+                  results={results}
+                  commitments={commitments}
+                  onRemove={handleRemove}
+                />
               </>
             )}
           </div>

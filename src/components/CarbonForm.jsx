@@ -42,7 +42,7 @@ export default function CarbonForm({ onCalculate }) {
             <input id="carKm" type="number" inputMode="numeric" name="carKm" value={formData.carKm} onChange={handleChange} placeholder="e.g. 50" min="0" className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" />
           </div>
           <div>
-            <label htmlFor="bikeKm" className="block text-sm font-medium text-gray-700 mb-1">Bike Distance (km/week)</label>
+            <label htmlFor="bikeKm" className="block text-sm font-medium text-gray-700 mb-1">Motorbike / Scooter (km/week)</label>
             <input id="bikeKm" type="number" inputMode="numeric" name="bikeKm" value={formData.bikeKm} onChange={handleChange} placeholder="e.g. 20" min="0" className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" />
           </div>
           <div>

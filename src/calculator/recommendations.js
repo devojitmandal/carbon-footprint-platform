@@ -1,15 +1,14 @@
-// src/calculator/recommendations.js
 import { ACTIONS } from '../data/actions';
 
 export function getRecommendations(sanitizedInputs) {
   const { transport = {}, energy = {}, diet = {}, shopping = {} } = sanitizedInputs;
 
-  // Build the condition flags exactly as requested
   const conditions = {
     has_petrol_or_diesel_car: transport.vehicleType === 'petrol_car' || transport.vehicleType === 'diesel_car',
     drives_more_than_50km_week: (transport.carKm || 0) > 50,
     drives_more_than_100km_week: (transport.carKm || 0) > 100,
-    has_domestic_flights: (transport.domesticFlights || 0) > 0,
+    low_domestic_flights: (transport.domesticFlights || 0) > 0 && (transport.domesticFlights || 0) <= 2,
+    high_domestic_flights: (transport.domesticFlights || 0) > 2,
     uses_electricity: (energy.monthlyKwh || 0) > 0,
     monthly_kwh_above_200: (energy.monthlyKwh || 0) > 200,
     uses_lpg: (energy.lpgCylindersPerMonth || 0) > 0,
@@ -22,24 +21,23 @@ export function getRecommendations(sanitizedInputs) {
 
   const validRecommendations = [];
 
-  // Filter, calculate dynamic savings, and populate
   ACTIONS.forEach(action => {
     if (conditions[action.condition]) {
       const savingsKg = action.calculateSavings(sanitizedInputs);
       if (savingsKg > 0) {
         validRecommendations.push({
-          id: action.id,
-          category: action.category,
-          title: action.title,
-          description: action.description,
-          difficulty: action.difficulty,
-          savingsKg: savingsKg
-        });
+            id: action.id,
+            category: action.category,
+            title: action.title,
+            description: action.description,
+            difficulty: action.difficulty,
+            savingsKg: savingsKg,
+            evidence: action.evidence
+          });
       }
     }
   });
 
-  // Sort by highest impact descending and return top 6
   return validRecommendations
     .sort((a, b) => b.savingsKg - a.savingsKg)
     .slice(0, 6);

@@ -40,5 +40,7 @@ export const TRANSPORT_FACTORS = {
   // BENCHMARKS: kg CO₂ per year
   export const BENCHMARKS = {
     GLOBAL_AVG: 4000,
-    INDIA_AVG: 1900
+    INDIA_AVG: 1900,
+    TARGET_2030: 2500, // 1.5°C goal (2.5 tonnes)
+    TARGET_2050: 700   // 1.5°C goal (0.7 tonnes)
   };

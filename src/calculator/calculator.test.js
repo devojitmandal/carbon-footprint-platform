@@ -7,6 +7,13 @@ import {
   getRating 
 } from './calculator';
 import { getRecommendations } from './recommendations';
+import { 
+    saveCommitments, 
+    loadCommitments, 
+    addCommitment, 
+    removeCommitment, 
+    calculateProjectedFootprint 
+  } from '../utils/storage';
 
 describe('calculateTransport', () => {
   it('returns 0 when all inputs are 0', () => {
@@ -154,5 +161,41 @@ describe('getRecommendations', () => {
       const result = getRecommendations(evInputs);
       const hasEvRec = result.some(item => item.id === 'switch_to_ev');
       expect(hasEvRec).toBe(false);
+    });
+  });
+  describe('storage utilities', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+  
+    it('loadCommitments returns empty array when nothing stored', () => {
+      expect(loadCommitments()).toEqual([]);
+    });
+  
+    it('saveCommitments and loadCommitments round-trip correctly', () => {
+      const data = [{ id: 'test_action', savingsKg: 500 }];
+      saveCommitments(data);
+      expect(loadCommitments()).toEqual(data);
+    });
+  
+    it('addCommitment prevents duplicates', () => {
+      const action = { id: 'switch_to_ev', savingsKg: 800 };
+      addCommitment(action);
+      addCommitment(action); 
+      expect(loadCommitments().length).toBe(1);
+    });
+  
+    it('removeCommitment removes correct item', () => {
+      addCommitment({ id: 'action_a', savingsKg: 300 });
+      addCommitment({ id: 'action_b', savingsKg: 500 });
+      removeCommitment('action_a');
+      const remaining = loadCommitments();
+      expect(remaining.length).toBe(1);
+      expect(remaining[0].id).toBe('action_b');
+    });
+  
+    it('calculateProjectedFootprint never goes below zero', () => {
+      const commitments = [{ savingsKg: 9999 }];
+      expect(calculateProjectedFootprint(1000, commitments)).toBe(0);
     });
   });

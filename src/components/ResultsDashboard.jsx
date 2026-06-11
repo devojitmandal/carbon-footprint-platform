@@ -1,15 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import ShareCard from './ShareCard';
 
 export default function ResultsDashboard({ results }) {
   const [animate, setAnimate] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const shareCardRef = useRef(null); // Reference for the hidden card
 
-  // Trigger animation shortly after mount
   useEffect(() => {
     const timer = setTimeout(() => setAnimate(true), 50);
     return () => clearTimeout(timer);
   }, []);
 
-  const { total, breakdown, vsGlobalAvg, vsIndiaAvg, rating } = results;
+  // The Download Engine
+  const handleDownloadCard = async () => {
+    if (!shareCardRef.current) return;
+    
+    try {
+      setIsGenerating(true);
+      // Capture the off-screen element
+      const canvas = await html2canvas(shareCardRef.current, {
+        scale: 2, // High resolution for LinkedIn
+        backgroundColor: '#111827', // Matches the gray-900 background
+        logging: false
+      });
+      
+      // Convert to image and trigger download
+      const image = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = `FootprintAware-${results.rating}.png`;
+      link.click();
+    } catch (err) {
+      console.error("Failed to generate card:", err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const { total, breakdown, vsGlobalAvg, vsIndiaAvg, vs2030Target, vs2050Target, rating } = results;
 
   // Rating Badge Logic
   const getBadgeColor = (rtg) => {
@@ -50,7 +79,7 @@ export default function ResultsDashboard({ results }) {
   const flights = Math.round(total / (1200 * 0.255));
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in relative">
       
       {/* Section A: Hero Score */}
       <div className="text-center space-y-4">
@@ -63,6 +92,17 @@ export default function ResultsDashboard({ results }) {
           </span>
           {renderPill(vsGlobalAvg, 'global avg')}
           {renderPill(vsIndiaAvg, 'India avg')}
+        </div>
+
+        {/* The Download Button */}
+        <div className="pt-4">
+          <button 
+            onClick={handleDownloadCard}
+            disabled={isGenerating}
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold py-2 px-6 rounded-lg text-sm transition-colors shadow-lg flex items-center gap-2 mx-auto"
+          >
+            {isGenerating ? '📸 Generating...' : '📸 Download LinkedIn Share Card'}
+          </button>
         </div>
       </div>
 
@@ -92,18 +132,38 @@ export default function ResultsDashboard({ results }) {
 
       {/* Section C: Benchmarks */}
       <div className="bg-gray-800 rounded-xl p-5 border border-gray-700 space-y-3 text-sm">
-        <h3 className="font-bold text-gray-400 uppercase tracking-wider mb-2">Benchmarks</h3>
-        <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
-           <span className="text-gray-300">vs Global (4,000 kg)</span>
-           <span className="font-medium text-white">
-             {vsGlobalAvg < 0 ? `🎉 ${Math.abs(vsGlobalAvg).toFixed(1)}% better` : vsGlobalAvg === 0 ? 'Exactly average' : `${vsGlobalAvg.toFixed(1)}% above`}
-           </span>
+        <h3 className="font-bold text-gray-400 uppercase tracking-wider mb-2">Benchmarks & Science Targets</h3>
+        
+        {/* Averages */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="flex flex-col p-3 bg-gray-900/50 rounded-lg">
+             <span className="text-gray-400 text-xs mb-1">vs Global (4,000 kg)</span>
+             <span className="font-medium text-white">
+               {vsGlobalAvg < 0 ? `🎉 ${Math.abs(vsGlobalAvg).toFixed(1)}% better` : vsGlobalAvg === 0 ? 'Exactly average' : `${vsGlobalAvg.toFixed(1)}% above`}
+             </span>
+          </div>
+          <div className="flex flex-col p-3 bg-gray-900/50 rounded-lg">
+             <span className="text-gray-400 text-xs mb-1">vs India (1,900 kg)</span>
+             <span className="font-medium text-white">
+               {vsIndiaAvg < 0 ? `🎉 ${Math.abs(vsIndiaAvg).toFixed(1)}% better` : vsIndiaAvg === 0 ? 'Exactly average' : `${vsIndiaAvg.toFixed(1)}% above`}
+             </span>
+          </div>
         </div>
-        <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
-           <span className="text-gray-300">vs India (1,900 kg)</span>
-           <span className="font-medium text-white">
-             {vsIndiaAvg < 0 ? `🎉 ${Math.abs(vsIndiaAvg).toFixed(1)}% better` : vsIndiaAvg === 0 ? 'Exactly average' : `${vsIndiaAvg.toFixed(1)}% above`}
-           </span>
+
+        {/* 1.5°C Climate Targets */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-3 bg-blue-900/20 border border-blue-800/30 rounded-lg">
+             <span className="text-blue-400 font-bold flex items-center gap-2">🎯 2030 Target <span className="text-blue-200/50 font-normal text-xs">(2,500 kg)</span></span>
+             <span className="font-medium text-white">
+               {vs2030Target <= 0 ? <span className="text-green-400">✅ Goal Met</span> : `${vs2030Target.toFixed(1)}% over`}
+             </span>
+          </div>
+          <div className="flex items-center justify-between p-3 bg-purple-900/20 border border-purple-800/30 rounded-lg">
+             <span className="text-purple-400 font-bold flex items-center gap-2">🌍 2050 Target <span className="text-purple-200/50 font-normal text-xs">(700 kg)</span></span>
+             <span className="font-medium text-white">
+               {vs2050Target <= 0 ? <span className="text-green-400">✅ Goal Met</span> : `${vs2050Target.toFixed(1)}% over`}
+             </span>
+          </div>
         </div>
       </div>
 
@@ -133,6 +193,9 @@ export default function ResultsDashboard({ results }) {
           </div>
         </div>
       </div>
+
+      {/* The Hidden Share Card for html2canvas to capture */}
+      <ShareCard ref={shareCardRef} results={results} />
 
     </div>
   );
