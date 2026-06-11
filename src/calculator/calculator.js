@@ -16,13 +16,14 @@ import {
     const weeklyBusKm = (inputs.busKm || 0) * 52;
     const weeklyTrainKm = (inputs.trainKm || 0) * 52;
     
-    const flightKm = ((inputs.domesticFlights || 0) * 1200) + ((inputs.longFlights || 0) * 8000);
+    const domesticFlightEmissions = (inputs.domesticFlights || 0) * 1200 * TRANSPORT_FACTORS.flight_domestic;
+    const longFlightEmissions = (inputs.longFlights || 0) * 8000 * TRANSPORT_FACTORS.flight_long;
   
     const total = (weeklyCarKm * carFactor) + 
                   (weeklyBikeKm * TRANSPORT_FACTORS.motorcycle) + 
                   (weeklyBusKm * TRANSPORT_FACTORS.bus) + 
                   (weeklyTrainKm * TRANSPORT_FACTORS.train) + 
-                  (flightKm * TRANSPORT_FACTORS.flight_domestic); // Simplified flight logic per standard
+                  domesticFlightEmissions + longFlightEmissions; 
   
     return total;
   }

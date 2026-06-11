@@ -1,4 +1,3 @@
-// src/calculator/calculator.test.js
 import { describe, it, expect } from 'vitest';
 import { 
   calculateTransport, 
@@ -7,6 +6,7 @@ import {
   calculateTotalFootprint, 
   getRating 
 } from './calculator';
+import { getRecommendations } from './recommendations';
 
 describe('calculateTransport', () => {
   it('returns 0 when all inputs are 0', () => {
@@ -15,15 +15,14 @@ describe('calculateTransport', () => {
   });
 
   it('correctly calculates petrol car weekly km to annual kg', () => {
-    // 10km weekly * 52 weeks * 0.192 factor = 99.84
     const inputs = { carKm: 10, vehicleType: 'petrol_car' };
     expect(calculateTransport(inputs)).toBeCloseTo(99.84);
   });
 
   it('flight calculation uses correct average distances', () => {
-    // 1 domestic (1200) + 1 long (8000) = 9200km * 0.255 = 2346
+    // 1 domestic (1200 * 0.255 = 306) + 1 long (8000 * 0.195 = 1560) = 1866
     const inputs = { domesticFlights: 1, longFlights: 1 };
-    expect(calculateTransport(inputs)).toBeCloseTo(2346);
+    expect(calculateTransport(inputs)).toBeCloseTo(1866);
   });
 
   it('electric car produces lower emissions than petrol for same km', () => {
@@ -39,12 +38,10 @@ describe('calculateEnergy', () => {
   });
 
   it('monthly kWh is correctly annualized', () => {
-    // 100kWh * 12 * 0.82 = 984
     expect(calculateEnergy({ monthlyKwh: 100 })).toBeCloseTo(984);
   });
 
   it('LPG cylinders are correctly multiplied', () => {
-    // 1 cylinder * 12 * 12.7 = 152.4
     expect(calculateEnergy({ lpgCylindersPerMonth: 1 })).toBeCloseTo(152.4);
   });
 });
@@ -82,6 +79,7 @@ describe('calculateTotalFootprint', () => {
     expect(result).toHaveProperty('vsIndiaAvg');
     expect(result).toHaveProperty('rating');
   });
+  
 
   it('breakdown values sum to total', () => {
     const result = calculateTotalFootprint(mockInputs);
@@ -90,17 +88,13 @@ describe('calculateTotalFootprint', () => {
   });
 
   it('vsGlobalAvg is negative when total < 4000', () => {
-    const result = calculateTotalFootprint(mockInputs); // total is 1700
+    const result = calculateTotalFootprint(mockInputs);
     expect(result.vsGlobalAvg).toBeLessThan(0);
   });
 
-  it('rating is "Excellent" for total < 1000', () => {
-    const excellentInputs = {
-      diet: { dietType: 'vegan' }, // Let's mock a very low total by overriding internal logic if needed, or just test getRating directly
-    };
-    // Since diet alone is 1500, we'll test getRating directly for the < 1000 case in the next block.
-    // For this one, let's just ensure rating matches the output total (1700 = Good).
-    const result = calculateTotalFootprint(mockInputs);
+  // MOVED: Properly nested under calculateTotalFootprint where mockInputs is defined
+  it('rating is "Good" for total < 2000', () => { 
+    const result = calculateTotalFootprint(mockInputs); // total is 1700
     expect(result.rating).toBe('Good'); 
   });
 });
@@ -113,4 +107,52 @@ describe('getRating', () => {
     expect(getRating(4500)).toBe('High');
     expect(getRating(5500)).toBe('Very High');
   });
+
+  // MOVED: Isolated rating test
+  it('rating is "Excellent" for total < 1000', () => { 
+    expect(getRating(500)).toBe('Excellent');
+  });
 });
+describe('getRecommendations', () => {
+    const mockInputs = {
+      transport: { carKm: 150, vehicleType: 'petrol_car', domesticFlights: 2 },
+      energy: { monthlyKwh: 250, lpgCylindersPerMonth: 1 },
+      diet: { dietType: 'meat_heavy' },
+      shopping: { shoppingLevel: 'excessive' }
+    };
+  
+    it('returns an array', () => {
+      const result = getRecommendations(mockInputs);
+      expect(Array.isArray(result)).toBe(true);
+    });
+  
+    it('returns maximum 6 items', () => {
+      const result = getRecommendations(mockInputs);
+      expect(result.length).toBeLessThanOrEqual(6);
+    });
+  
+    it('all items have required fields: id, title, savingsKg, difficulty', () => {
+      const result = getRecommendations(mockInputs);
+      expect(result.length).toBeGreaterThan(0); // Make sure it populated something
+      result.forEach(item => {
+        expect(item).toHaveProperty('id');
+        expect(item).toHaveProperty('title');
+        expect(item).toHaveProperty('savingsKg');
+        expect(item).toHaveProperty('difficulty');
+      });
+    });
+  
+    it('results are sorted by savingsKg descending', () => {
+      const result = getRecommendations(mockInputs);
+      for (let i = 0; i < result.length - 1; i++) {
+        expect(result[i].savingsKg).toBeGreaterThanOrEqual(result[i + 1].savingsKg);
+      }
+    });
+  
+    it('does not recommend switch_to_ev when vehicleType is electric_car', () => {
+      const evInputs = { ...mockInputs, transport: { ...mockInputs.transport, vehicleType: 'electric_car' } };
+      const result = getRecommendations(evInputs);
+      const hasEvRec = result.some(item => item.id === 'switch_to_ev');
+      expect(hasEvRec).toBe(false);
+    });
+  });
