@@ -1,7 +1,7 @@
 import { ACTIONS } from '../data/actions';
 
 export function getRecommendations(sanitizedInputs) {
-  const { transport = {}, energy = {}, diet = {}, shopping = {} } = sanitizedInputs;
+    const { transport = {}, energy = {}, diet = {}, shopping = {} } = sanitizedInputs || {};
 
   const conditions = {
     has_petrol_or_diesel_car: transport.vehicleType === 'petrol_car' || transport.vehicleType === 'diesel_car',

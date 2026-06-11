@@ -40,7 +40,7 @@ function App() {
           <h2 className="text-2xl font-bold mb-2 text-gray-800">Calculate Your Impact</h2>
           <p className="text-gray-500 mb-6">Fill out the parameters below to generate your personalized carbon footprint analysis.</p>
           
-          <CarbonForm onCalculate={(data, rawInputs) => {
+          <CarbonForm onCalculate={(data, sanitizedInputs) => {
             setResults(data);
             setRecommendations(getRecommendations(sanitizedInputs));
           }} />
