@@ -172,22 +172,22 @@ export default function ResultsDashboard({ results }) {
         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Real-World Equivalents</h3>
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
-             <div className="text-2xl mb-1">🌳</div>
+          <div className="text-2xl mb-1" aria-hidden="true">🌳</div>
              <div className="font-bold text-white text-lg">{trees.toLocaleString()}</div>
              <div className="text-xs text-gray-400">Trees to offset</div>
           </div>
           <div className="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
-             <div className="text-2xl mb-1">🚗</div>
+          <div className="text-2xl mb-1" aria-hidden="true">🚗</div>
              <div className="font-bold text-white text-lg">{carKm.toLocaleString()} km</div>
              <div className="text-xs text-gray-400">Driving equivalent</div>
           </div>
           <div className="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
-             <div className="text-2xl mb-1">📱</div>
+          <div className="text-2xl mb-1" aria-hidden="true">📱</div>
              <div className="font-bold text-white text-lg">{phones.toLocaleString()}</div>
              <div className="text-xs text-gray-400">Phone charges</div>
           </div>
           <div className="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
-             <div className="text-2xl mb-1">✈️</div>
+          <div className="text-2xl mb-1" aria-hidden="true">✈️</div>
              <div className="font-bold text-white text-lg">{flights.toLocaleString()}</div>
              <div className="text-xs text-gray-400">Flights to Delhi</div>
           </div>

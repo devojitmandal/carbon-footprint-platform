@@ -64,7 +64,7 @@ export default function ActionRecommender({ recommendations, totalFootprint, com
                       onClick={() => setExpandedEvidence(isExpanded ? null : rec.id)}
                       className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 font-medium mb-2 transition-colors"
                     >
-                      <span className="text-base">🔬</span> 
+                      <span aria-hidden="true">🔬</span> View Scientific Backing 
                       {isExpanded ? "Hide Science" : "View Scientific Backing"}
                     </button>
 

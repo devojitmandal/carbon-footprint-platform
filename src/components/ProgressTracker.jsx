@@ -25,8 +25,8 @@ export default function ProgressTracker({ results, commitments, onRemove }) {
   return (
     <div className="mt-8 pt-8 border-t border-gray-700 animate-fade-in" style={{ animationDelay: '500ms' }}>
       <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-        📈 Your Progress Tracker
-      </h3>
+        <span aria-hidden="true">📈</span> Your Progress Tracker
+        </h3>
 
       {/* Section A: Projected Footprint */}
       <div className="bg-gray-800 rounded-xl p-5 border border-gray-700 mb-4">
