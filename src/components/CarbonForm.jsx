@@ -24,8 +24,6 @@ export default function CarbonForm({ onCalculate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // sanitizeFormInputs returns the correctly nested structure
-    // { transport: {...}, energy: {...}, diet: {...}, shopping: {...} }
     const sanitizedInputs = sanitizeFormInputs(formData);
     const results = calculateTotalFootprint(sanitizedInputs);
     onCalculate(results, sanitizedInputs);
@@ -36,8 +34,8 @@ export default function CarbonForm({ onCalculate }) {
 
       {/* Transport Section */}
       <section aria-labelledby="transport-heading" className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-        <h3 id="transport-heading" className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          🚗 Transport
+      <h3 id="transport-heading" className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+         <span aria-hidden="true">🚗</span> Transport
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -91,8 +89,8 @@ export default function CarbonForm({ onCalculate }) {
 
       {/* Energy Section */}
       <section aria-labelledby="energy-heading" className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-        <h3 id="energy-heading" className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          ⚡ Home Energy
+      <h3 id="energy-heading" className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <span aria-hidden="true">⚡</span> Home Energy
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -112,9 +110,9 @@ export default function CarbonForm({ onCalculate }) {
 
       {/* Lifestyle Section */}
       <section aria-labelledby="lifestyle-heading" className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-        <h3 id="lifestyle-heading" className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          🛒 Lifestyle
-        </h3>
+      <h3 id="lifestyle-heading" className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <span aria-hidden="true">🛒</span> Lifestyle
+    </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="dietType" className="block text-sm font-medium text-gray-700 mb-1">Diet Type</label>
