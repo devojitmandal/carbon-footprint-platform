@@ -28,10 +28,6 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // sanitizedInputs comes from sanitizeFormInputs() inside CarbonForm
-  // It is already in the correct nested shape:
-  // { transport: {...}, energy: {...}, diet: {...}, shopping: {...} }
-  // Pass it directly to getRecommendations — no regrouping needed
   const handleCalculate = (data, sanitizedInputs) => {
     setResults(data);
     setRecommendations(getRecommendations(sanitizedInputs));
