@@ -1,7 +1,6 @@
 import { ACTIONS } from '../data/actions';
 
 export function getRecommendations(sanitizedInputs) {
-    console.log('DEBUG inputs:', JSON.stringify(sanitizedInputs));
     const { transport = {}, energy = {}, diet = {}, shopping = {} } = sanitizedInputs || {};
 
   const conditions = {
