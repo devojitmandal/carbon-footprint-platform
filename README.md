@@ -35,6 +35,8 @@ The UI is engineered for strict WCAG 2.1 AA compliance. Forms utilize explicit `
 - Flight distances: domestic avg 1,200km, long-haul avg 8,000km
 - LPG cylinder weight: standard 14.2kg Indian cylinder
 
+## Built With
+Vite, React, Tailwind CSS, Vitest, html2canvas
 ## How to Run Locally
 ```bash
 npm install
