@@ -1,4 +1,13 @@
 import { ACTIONS } from '../data/actions';
+/**
+ * Evaluates sanitized user inputs against a matrix of climate actions
+ * to generate personalized, high-impact carbon reduction recommendations.
+ * * @param {Object} inputs - The sanitized user form data.
+ * @param {Object} inputs.transport - Transport-related metrics.
+ * @param {number} inputs.transport.carKm - Weekly car kilometers driven.
+ * @param {string} inputs.transport.vehicleType - Type of vehicle (e.g., 'petrol_car').
+ * @returns {Array<{id: string, title: string, savingsKg: number, evidence: Object}>} Array of valid recommendations.
+ */
 
 export function getRecommendations(sanitizedInputs) {
     const { transport = {}, energy = {}, diet = {}, shopping = {} } = sanitizedInputs || {};

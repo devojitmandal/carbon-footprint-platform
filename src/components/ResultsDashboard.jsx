@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import html2canvas from 'html2canvas';
 import ShareCard from './ShareCard';
 
-export default function ResultsDashboard({ results }) {
+function ResultsDashboard({ results }) {
   const [animate, setAnimate] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const shareCardRef = useRef(null); // Reference for the hidden card
+  const shareCardRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimate(true), 50);
@@ -13,28 +12,28 @@ export default function ResultsDashboard({ results }) {
   }, []);
 
   // The Download Engine
-  const handleDownloadCard = async () => {
-    if (!shareCardRef.current) return;
-    
+  const handleDownload = async () => {
     try {
-      setIsGenerating(true);
-      // Capture the off-screen element
-      const canvas = await html2canvas(shareCardRef.current, {
-        scale: 2, // High resolution for LinkedIn
-        backgroundColor: '#111827', // Matches the gray-900 background
-        logging: false
+      setIsGenerating(true); 
+
+      const html2canvas = (await import('html2canvas')).default;
+      
+      const element = document.getElementById('share-card');
+      if (!element) return;
+      
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#1f2937'
       });
       
-      // Convert to image and trigger download
-      const image = canvas.toDataURL('image/png');
       const link = document.createElement('a');
-      link.href = image;
-      link.download = `FootprintAware-${results.rating}.png`;
+      link.download = 'My_Climate_Commitment.png';
+      link.href = canvas.toDataURL('image/png');
       link.click();
-    } catch (err) {
-      console.error("Failed to generate card:", err);
+    } catch (error) {
+      console.error("Failed to generate image", error);
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false); 
     }
   };
 
@@ -97,7 +96,7 @@ export default function ResultsDashboard({ results }) {
         {/* The Download Button */}
         <div className="pt-4">
           <button 
-            onClick={handleDownloadCard}
+            onClick={handleDownload}
             disabled={isGenerating}
             className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold py-2 px-6 rounded-lg text-sm transition-colors shadow-lg flex items-center gap-2 mx-auto"
           >
@@ -193,10 +192,9 @@ export default function ResultsDashboard({ results }) {
           </div>
         </div>
       </div>
-
-      {/* The Hidden Share Card for html2canvas to capture */}
       <ShareCard ref={shareCardRef} results={results} />
 
     </div>
   );
 }
+export default React.memo(ResultsDashboard);

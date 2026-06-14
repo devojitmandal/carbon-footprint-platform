@@ -1,5 +1,12 @@
-// src/utils/sanitize.js
-
+/**
+ * Parses input to a float and clamps it within acceptable boundaries.
+ * Prevents NaN crashes and limits malicious or accidental extreme values.
+ * * @param {string|number} value - The raw input from the user.
+ * @param {number} min - The absolute minimum acceptable value.
+ * @param {number} max - The absolute maximum acceptable value.
+ * @param {number} fallback - The default value if parsing fails entirely.
+ * @returns {number} The sanitized, safe integer/float.
+ */
 export function sanitizeNumber(value, min, max, fallback) {
     const parsed = parseFloat(value);
     if (isNaN(parsed)) return fallback;

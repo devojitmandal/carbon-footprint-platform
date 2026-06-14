@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function ActionRecommender({ recommendations, totalFootprint, commitments, onCommit }) {
+function ActionRecommender({ recommendations, totalFootprint, commitments, onCommit }) {
 
   const [expandedEvidence, setExpandedEvidence] = useState(null);
 
@@ -61,13 +61,12 @@ export default function ActionRecommender({ recommendations, totalFootprint, com
                 {rec.evidence && (
                   <div className="mb-4">
                     <button 
-                      onClick={() => setExpandedEvidence(isExpanded ? null : rec.id)}
-                      className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 font-medium mb-2 transition-colors"
-                    >
-                      <span aria-hidden="true">🔬</span> View Scientific Backing 
-                      {isExpanded ? "Hide Science" : "View Scientific Backing"}
-                    </button>
-
+                  onClick={() => setExpandedEvidence(isExpanded ? null : rec.id)}
+                  className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 font-medium mb-2 transition-colors"
+                >
+                  <span aria-hidden="true">🔬</span> 
+                  {isExpanded ? "Hide Science" : "View Scientific Backing"}
+                </button>
                     {isExpanded && (
                       <div className="bg-blue-900/20 border border-blue-800/40 p-3 rounded-lg text-xs animate-fade-in">
                         <span className="font-bold text-blue-300 block mb-1">Source: {rec.evidence.source}</span>
@@ -118,3 +117,4 @@ export default function ActionRecommender({ recommendations, totalFootprint, com
     </div>
   );
 }
+export default React.memo(ActionRecommender);

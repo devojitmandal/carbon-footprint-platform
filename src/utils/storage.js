@@ -1,5 +1,3 @@
-// src/utils/storage.js
-
 const STORAGE_KEY = 'footprint_tracker_v1';
 
 export function saveCommitments(commitments) {

@@ -3,7 +3,7 @@ import { calculateProjectedFootprint } from '../utils/storage';
 import { getRating } from '../calculator/calculator';
 import { downloadCalendarInvite } from '../utils/calendar';
 
-export default function ProgressTracker({ results, commitments, onRemove }) {
+function ProgressTracker({ results, commitments, onRemove }) {
   const projectedTotal = calculateProjectedFootprint(results.total, commitments);
   const reductionKg = results.total - projectedTotal;
   const reductionPct = results.total > 0 ? ((reductionKg / results.total) * 100).toFixed(1) : 0;
@@ -115,3 +115,4 @@ export default function ProgressTracker({ results, commitments, onRemove }) {
     </div>
   );
 }
+export default React.memo(ProgressTracker);
