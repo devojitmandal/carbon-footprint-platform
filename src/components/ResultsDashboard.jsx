@@ -18,7 +18,7 @@ function ResultsDashboard({ results }) {
 
       const html2canvas = (await import('html2canvas')).default;
       
-      const element = document.getElementById('share-card');
+      const element = shareCardRef.current;
       if (!element) return;
       
       const canvas = await html2canvas(element, {
